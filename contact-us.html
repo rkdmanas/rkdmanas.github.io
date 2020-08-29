@@ -866,20 +866,21 @@ img.emoji {
                         <div class="modal-body">
                             <div role="form" class="wpcf7" id="wpcf7-f272-o3" lang="en-US" dir="ltr">
 <div class="screen-reader-response"></div>
-<form action="https://www.bluetraincomputers.com/contactusform/" method="post" class="wpcf7-form" novalidate="novalidate">
+<form action="#!" method="post" class="myform" id="myform" novalidate="novalidate">
 <div style="display: none;">
 </div>
 <div class="form-group">
-<span class="wpcf7-form-control-wrap your-name"><input type="text" name="your-name" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required form-control" id="exampleInputName" aria-required="true" aria-invalid="false" placeholder="Name*" /></span>
+<span class="wpcf7-form-control-wrap your-name"><input type="text" name="your-name" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required form-control" id="Name" aria-required="true" aria-invalid="false" placeholder="Name*" /></span>
 </div>
 <div class="form-group">
-<span class="wpcf7-form-control-wrap your-email"><input type="email" name="your-email" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email form-control" id="exampleInputEmail" aria-required="true" aria-invalid="false" placeholder="Enter Email*" /></span>
+<span class="wpcf7-form-control-wrap your-email"><input type="email" name="your-email" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email form-control" id="Email" aria-required="true" aria-invalid="false" placeholder="Enter Email*" /></span>
 </div>
 <div class="form-group">
-<span class="wpcf7-form-control-wrap your-phone"><input type="tel" name="your-phone" value="" size="40" maxlength="10" minlength="10" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-required wpcf7-validates-as-tel form-control" id="exampleInputPhone" aria-required="true" aria-invalid="false" placeholder="Mobile*" /></span>
+<span class="wpcf7-form-control-wrap your-phone"><input type="tel" name="your-phone" value="" size="40" maxlength="10" minlength="10" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-required wpcf7-validates-as-tel form-control" id="Phone" aria-required="true" aria-invalid="false" placeholder="Mobile*" /></span>
 </div>
 <div class="form-group">
-<span class="wpcf7-form-control-wrap your-services"><select name="your-services" class="wpcf7-form-control wpcf7-select wpcf7-validates-as-required form-control" id="exampleFormServices" aria-required="true" aria-invalid="false">
+<span class="wpcf7-form-control-wrap your-services"><select name="your-services" class="wpcf7-form-control wpcf7-select wpcf7-validates-as-required form-control" id="Services" aria-required="true" aria-invalid="false">
+    <option value="">Select one</option>
     <option value="Data Center">Data Center</option>
     <option value="Cloud Service">Cloud Service</option>
     <option value="Network Security">Network Security</option>
@@ -890,7 +891,7 @@ img.emoji {
 	</select></span>
 </div>
 <div class="form-group">
-<span class="wpcf7-form-control-wrap your-message"><textarea name="your-message" cols="40" rows="2" class="wpcf7-form-control wpcf7-textarea wpcf7-validates-as-required form-control" aria-required="true" aria-invalid="false" placeholder="Message*"></textarea></span>
+<span class="wpcf7-form-control-wrap your-message"><textarea name="your-message" cols="40" rows="2" class="wpcf7-form-control wpcf7-textarea wpcf7-validates-as-required form-control" aria-required="true" aria-invalid="false" id="Messages" placeholder="Message*"></textarea></span>
 </div>
 <p><input type="submit" value="Submit" class="wpcf7-form-control wpcf7-submit btn btn-primary" /></p>
 <div class="wpcf7-response-output wpcf7-display-none"></div></form></div>                         </div>
@@ -975,8 +976,49 @@ $("#pageclick").click(function(e){
 var wpcf7 = {"apiSettings":{"root":"https:\/\/www.bluetraincomputers.com\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"}};
 /* ]]> */
 </script>
-<script type='text/javascript' src='plugins/contact-form-7/includes/js/scriptsb62d.js?ver=5.1.6'></script>
 <script type='text/javascript' src='js/wp-embed.min03ec.js?ver=5.3.4'></script>
+<script>
+ $(function () {
+		
+		$('#myform').on('submit', function (e) {
+        var name = $('#Name').val();
+		var email = $('#Email').val();
+		var phone = $('#Phone').val();
+		var services = $('#Services').val();
+		var message = $('#Messages').val();
+		var subj  = "New inquiry for " + services;
+		var fmsg = "Hi \n" + "My name is " + name + "!\nI have a query \n*" + message + "*\n\n Email: " + email + "\n Phone: " + phone + "\n Service: " + services;
+		alert(fmsg);
+          e.preventDefault();
+			
+			$.ajax( {
+				type: 'POST',
+				url: 'https://api.sendgrid.com/v3/mail/send',
+				data: JSON.stringify({"personalizations":[{"to":[{"email":email}]}],"from":{"email":"info@bluetraincomputers.com"},"subject": subj,"content":[{"type":"text/plain","value": fmsg}]}),
+				dataType: 'json',
+				processData: false,
+				headers: {
+					"Authorization": "Bearer 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",
+					"Content-Type": "application/json"
+				  },
+				contentType: false
+			} ).done( function( data, status, xhr ) {
+				ajaxSuccess( data, status, xhr);
+				alert("Messag sent!");
+			} ).fail( function( xhr, status, error ) {
+				var $e = $( '<div class="ajax-error"></div>' ).text( error.message );
+				$( '<div class="ajax-error"></div>' ).text( status + " - " + error.message );
+				console.log("error"+status,error);
+				alert("Error!");
+			} );
+
+        });
+
+      });
+
+
+
+</script>
 
 </body>
 
